@@ -1,0 +1,46 @@
+version: "3.9"
+services:
+  api-demo-spring:
+    image: api-demo-spring
+    container_name: Spring_api_container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - spring-network
+    depends_on:
+      - mysql
+  mysql:
+    image: mysql
+    container_name: mysql_database
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: demoapi
+      MYSQL_USER: rootSpring
+      MYSQL_PASSWORD: rootSpring
+    ports:
+      - "3308:3306"
+    networks:
+      - spring-network
+    volumes:
+      - mysql-volume:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: phpmyadmin_container
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: rootSpring
+      PMA_PASSWORD: rootSpring
+    networks:
+      - spring-network
+    depends_on:
+      - mysql
+networks:
+  spring-network:
+volumes:
+  mysql-volume:
